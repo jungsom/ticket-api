@@ -1,0 +1,20 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type TicketModel {
+  id: Int!
+  code: String!
+  name: String!
+  state: TicketState!
+}
+
+"""예약 상태"""
+enum TicketState {
+  AVAILABLE
+  RESERVED
+}
+
+type Query {
+  ticket(id: Float!): TicketModel!
+}
