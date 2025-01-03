@@ -2,7 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type TicketModel {
+type TicketOutPut {
   id: Int!
   code: String!
   name: String!
@@ -15,6 +15,13 @@ enum TicketState {
   RESERVED
 }
 
+type TicketCountOutPut {
+  name: String!
+  count: Int!
+}
+
 type Query {
-  ticket(id: Float!): TicketModel!
+  ticket(id: Float!): TicketOutPut!
+  availableTicket(name: String!): [TicketOutPut!]!
+  ticketCounts: [TicketCountOutPut!]!
 }

@@ -1,13 +1,10 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 
 @ObjectType()
-export class UserModel {
-    @Field(type => Int)
-    id: number;
-
-    @Field(type => String)
-    email: string;
-
+export class TicketCountOutPut {
     @Field(type => String)
     name: string;
+
+    @Field(type => Int)
+    count: number;
 }

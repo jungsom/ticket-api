@@ -1,16 +1,12 @@
 import { Module } from '@nestjs/common';
-import { AppController } from '../resolvers/app.controller';
 import { GraphQLModule } from '@nestjs/graphql';
-import { AppService } from '../services/app.service';
-import { ApolloConfig } from '@apollo/server';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../entities/User.entity';
-import { Ticket } from '../entities/Ticket.entity';
-import { UserTicket } from '../entities/UserTicket.entity';
-import { TicketResolver } from 'src/resolvers/ticket.resolver';
-import { TicketService } from 'src/services/ticket.service';
+import { User } from 'src/user/user.entity';
+import { Ticket } from 'src/ticket/ticket.entity';
+import { UserTicket } from './user/user-ticket.entity';
+import { TicketResolver } from 'src/ticket/ticket.resolver';
+import { TicketService } from 'src/ticket/ticket.service';
 
 @Module({
   imports: [
@@ -29,9 +25,8 @@ import { TicketService } from 'src/services/ticket.service';
       entities: [User, Ticket, UserTicket],
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([Ticket])
+    TypeOrmModule.forFeature([Ticket]),
   ],
-  controllers: [AppController],
-  providers: [AppService, TicketService, TicketResolver],
+  providers: [TicketService, TicketResolver],
 })
 export class AppModule {}
