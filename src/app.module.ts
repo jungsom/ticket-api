@@ -12,6 +12,7 @@ import { UserReolver } from './user/user.resolver';
 import { AuthService } from './user/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Request, Response } from 'express';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       driver: ApolloDriver,
       playground: true,
       autoSchemaFile: 'schema.gql',
-      context: ({ req, res }) => ({ req, res })
+      context: ({ req, res }: { req: Request; res: Response }) => ({ req, res }),
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -36,7 +37,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '1h'},
       })
     }),
     ConfigModule.forRoot({

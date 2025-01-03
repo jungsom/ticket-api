@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { UserInput } from './dtos/user.dto';
 import { NotFoundError } from 'rxjs';
 import { AuthService } from './auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
@@ -14,14 +15,18 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly authService: AuthService,
+    private readonly jwtService: JwtService,
   ) {}
 
   // TODO: 회원가입 (비밀번호 해시화)
 
-  async getLogin(input: UserInput): Promise<{access_token: string}> {
-    const { access_token } = await this.authService.signIn(input.email, input.password)
+  async getToken(input: UserInput): Promise<{accessToken: string, refreshToken: string}> {
+    const payload: any = {input};
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '1h'})
+    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d'})
 
-    return { access_token }
+
+    return { accessToken, refreshToken }
   }
 
   async createAccessToken() {

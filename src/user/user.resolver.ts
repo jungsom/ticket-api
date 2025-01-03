@@ -10,9 +10,10 @@ export class UserReolver {
 
   @Query(() => String)
   async login(@Args('input') input: UserInput, @Context() context): Promise<string> {
-    const { access_token } = await this.userService.getLogin(input)
+    const { accessToken, refreshToken } = await this.userService.getToken(input)
 
-    context.res.setHeader(`Authorization`, `Bearer ${access_token}`);
+    context.res.setHeader(`Authorization`, `Bearer ${accessToken}`);
+    context.res.cookie('x-refresh-token', refreshToken, { maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true });
     return '로그인에 성공하였습니다.'
   }
 
