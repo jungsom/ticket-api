@@ -20,8 +20,21 @@ type TicketCountOutPut {
   count: Int!
 }
 
+type UserOutPut {
+  id: Int!
+  email: String!
+  name: String!
+}
+
 type Query {
   ticket(id: Float!): TicketOutPut!
   availableTicket(name: String!): [TicketOutPut!]!
   ticketCounts: [TicketCountOutPut!]!
+  login(input: UserInput!): String!
+  getProfile: UserOutPut!
+}
+
+input UserInput {
+  email: String!
+  password: String!
 }

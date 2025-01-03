@@ -7,6 +7,11 @@ import { Ticket } from 'src/ticket/ticket.entity';
 import { UserTicket } from './user/user-ticket.entity';
 import { TicketResolver } from 'src/ticket/ticket.resolver';
 import { TicketService } from 'src/ticket/ticket.service';
+import { UserService } from './user/user.service';
+import { UserReolver } from './user/user.resolver';
+import { AuthService } from './user/auth.service';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -14,6 +19,7 @@ import { TicketService } from 'src/ticket/ticket.service';
       driver: ApolloDriver,
       playground: true,
       autoSchemaFile: 'schema.gql',
+      context: ({ req, res }) => ({ req, res })
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -25,8 +31,18 @@ import { TicketService } from 'src/ticket/ticket.service';
       entities: [User, Ticket, UserTicket],
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([Ticket]),
+    TypeOrmModule.forFeature([Ticket, User]),
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1h'},
+      })
+    }),
+    ConfigModule.forRoot({
+      isGlobal: true
+    })
   ],
-  providers: [TicketService, TicketResolver],
+  providers: [TicketService, TicketResolver, UserService, UserReolver, AuthService],
 })
 export class AppModule {}
