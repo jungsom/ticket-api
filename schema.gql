@@ -39,6 +39,7 @@ type Query {
   ticketCounts: [TicketCountOutPut!]!
   buyTicket(id: Float!): TicketOutPut!
   reservedTicket: [UserTicketOutput!]!
+  cancelledTicket(id: Float!): String!
 }
 
 input UserInput {

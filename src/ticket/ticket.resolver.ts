@@ -50,7 +50,9 @@ export class TicketResolver {
 
   @UseGuards(AuthGuard)
   @Query(() => String)
-  async cancelledTicket(@Context() context) {
-    return await this.ticketService.deleteReservedTicket();
+  async cancelledTicket(@Args('id', { type: () => Number }) ticketId: number, @Context() context) {
+    await this.ticketService.deleteReservedTicket(ticketId);
+
+    return "해당 티켓에 대한 예약이 취소되었습니다."
   }
 }

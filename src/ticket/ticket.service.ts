@@ -112,7 +112,22 @@ export class TicketService {
   }
 
   /** 사용자 에약 취소 */
-  async deleteReservedTicket() {
-    return null;
+  async deleteReservedTicket(ticketId: number) {
+    const userTicket = await this.userTicketRepository.findOne({
+      where: {
+        ticket : { id: ticketId }
+      },
+    });
+    const ticket = await this.ticketRepository.findOne({
+       where : { id: ticketId }
+    })
+    if (!userTicket || !ticket) {
+      throw new Error("해당 티켓을 찾을 수 없습니다.")
+    }
+    
+    ticket.state = TicketState.AVAILABLE;
+
+    await this.userTicketRepository.delete(userTicket.id);
+    await this.ticketRepository.save(ticket)
   }
 }
