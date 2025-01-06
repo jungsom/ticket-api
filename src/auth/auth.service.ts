@@ -1,10 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from '../src/user/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../src/user/user.entity';
+import { User } from '../user/user.entity';
 import { Repository } from 'typeorm';
-import { PayLoad } from './auth.dto';
+import { PayLoad } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +26,7 @@ export class AuthService {
 
   /** 액세스 토큰 생성 */
   async createAccessToken(user: User): Promise<string> {
-    const payload : PayLoad = { sub: user.id, user_email: user.email };
+    const payload: PayLoad = { sub: user.id, user_email: user.email };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
 
     return accessToken;
@@ -35,7 +34,7 @@ export class AuthService {
 
   /** 리프레시 토큰 생성 */
   async createRefreshToken(user: User): Promise<string> {
-    const payload : PayLoad = { sub: user.id, user_email: user.email };
+    const payload: PayLoad = { sub: user.id, user_email: user.email };
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
     return refreshToken;

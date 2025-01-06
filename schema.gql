@@ -33,13 +33,13 @@ type UserTicketOutput {
 }
 
 type Query {
-  login(input: UserInput!): String!
   ticket(id: Float!): TicketOutPut!
   availableTicket(name: String!): [TicketOutPut!]!
   ticketCounts: [TicketCountOutPut!]!
   buyTicket(id: Float!): TicketOutPut!
   reservedTicket: [UserTicketOutput!]!
   cancelledTicket(id: Float!): String!
+  login(input: UserInput!): String!
 }
 
 input UserInput {

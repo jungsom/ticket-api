@@ -8,9 +8,9 @@ import { TicketCountOutPut } from './dtos/ticket-count.dto';
 import { User } from 'src/user/user.entity';
 import { UserTicket } from 'src/user/user-ticket.entity';
 import { UserService } from 'src/user/user.service';
-import { PayLoad } from 'auth/auth.dto';
 import { NOTFOUND } from 'dns';
 import { UserTicketOutput } from 'src/user/dtos/user-ticket.dto';
+import { PayLoad } from 'src/auth/dto/auth.dto';
 
 @Injectable()
 export class TicketService {
@@ -94,7 +94,6 @@ export class TicketService {
     return await this.userTicketRepository.save(newUserTicket);
   }
 
-
   /** 사용자 예약 현황 */
   async getReservedTicket(userInfo: PayLoad): Promise<UserTicketOutput[]> {
     const user = await this.userService.selectUser(userInfo.sub);
@@ -115,19 +114,19 @@ export class TicketService {
   async deleteReservedTicket(ticketId: number) {
     const userTicket = await this.userTicketRepository.findOne({
       where: {
-        ticket : { id: ticketId }
+        ticket: { id: ticketId },
       },
     });
     const ticket = await this.ticketRepository.findOne({
-       where : { id: ticketId }
-    })
+      where: { id: ticketId },
+    });
     if (!userTicket || !ticket) {
-      throw new Error("해당 티켓을 찾을 수 없습니다.")
+      throw new Error('해당 티켓을 찾을 수 없습니다.');
     }
-    
+
     ticket.state = TicketState.AVAILABLE;
 
     await this.userTicketRepository.delete(userTicket.id);
-    await this.ticketRepository.save(ticket)
+    await this.ticketRepository.save(ticket);
   }
 }

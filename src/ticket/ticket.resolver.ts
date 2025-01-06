@@ -3,10 +3,13 @@ import { TicketOutPut } from 'src/ticket/dtos/ticket.dto';
 import { TicketService } from 'src/ticket/ticket.service';
 import { TicketCountOutPut } from './dtos/ticket-count.dto';
 import { UseGuards } from '@nestjs/common';
-import { AuthGuard } from 'auth/auth.guard';
+import { AuthGuard } from 'src/auth/auth.guard';
 import { QueryBuilder } from 'typeorm';
 import { Ticket } from './ticket.entity';
-import { UserTicketInput, UserTicketOutput } from 'src/user/dtos/user-ticket.dto';
+import {
+  UserTicketInput,
+  UserTicketOutput,
+} from 'src/user/dtos/user-ticket.dto';
 
 @Resolver(() => TicketOutPut)
 export class TicketResolver {
@@ -32,10 +35,16 @@ export class TicketResolver {
 
   @UseGuards(AuthGuard)
   @Query(() => TicketOutPut)
-  async buyTicket(@Args('id', { type: () => Number }) id: number, @Context() context) {
+  async buyTicket(
+    @Args('id', { type: () => Number }) id: number,
+    @Context() context,
+  ) {
     const user = context.req.user;
     const updatedTicketState = await this.ticketService.updateTicketState(id);
-    const reservedTicket = await this.ticketService.reservedTicket(user, updatedTicketState)
+    const reservedTicket = await this.ticketService.reservedTicket(
+      user,
+      updatedTicketState,
+    );
 
     return updatedTicketState;
   }
@@ -50,9 +59,12 @@ export class TicketResolver {
 
   @UseGuards(AuthGuard)
   @Query(() => String)
-  async cancelledTicket(@Args('id', { type: () => Number }) ticketId: number, @Context() context) {
+  async cancelledTicket(
+    @Args('id', { type: () => Number }) ticketId: number,
+    @Context() context,
+  ) {
     await this.ticketService.deleteReservedTicket(ticketId);
 
-    return "해당 티켓에 대한 예약이 취소되었습니다."
+    return '해당 티켓에 대한 예약이 취소되었습니다.';
   }
 }

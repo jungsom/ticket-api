@@ -5,14 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
 import { Ticket } from 'src/ticket/ticket.entity';
 import { UserTicket } from './user/user-ticket.entity';
-import { TicketResolver } from 'src/ticket/ticket.resolver';
-import { TicketService } from 'src/ticket/ticket.service';
-import { UserService } from './user/user.service';
-import { UserReolver } from './user/user.resolver';
-import { AuthService } from '../auth/auth.service';
-import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
+import { AuthModule } from './auth/auth.module';
+import { TicketModule } from './ticket/ticket.module';
+import { UserModule } from './user/user.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -35,23 +33,13 @@ import { Request, Response } from 'express';
       entities: [User, Ticket, UserTicket],
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([Ticket, User, UserTicket]),
-    JwtModule.registerAsync({
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET'),
-      }),
-    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    AuthModule,
+    TicketModule,
+    UserModule
   ],
-  providers: [
-    TicketService,
-    TicketResolver,
-    UserService,
-    UserReolver,
-    AuthService,
-  ],
+  providers: [],
 })
 export class AppModule {}
