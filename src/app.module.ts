@@ -9,7 +9,7 @@ import { TicketResolver } from 'src/ticket/ticket.resolver';
 import { TicketService } from 'src/ticket/ticket.service';
 import { UserService } from './user/user.service';
 import { UserReolver } from './user/user.resolver';
-import { AuthService } from './user/auth.service';
+import { AuthService } from '../auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
@@ -20,7 +20,10 @@ import { Request, Response } from 'express';
       driver: ApolloDriver,
       playground: true,
       autoSchemaFile: 'schema.gql',
-      context: ({ req, res }: { req: Request; res: Response }) => ({ req, res }),
+      context: ({ req, res }: { req: Request; res: Response }) => ({
+        req,
+        res,
+      }),
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -37,12 +40,18 @@ import { Request, Response } from 'express';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('JWT_SECRET'),
-      })
+      }),
     }),
     ConfigModule.forRoot({
-      isGlobal: true
-    })
+      isGlobal: true,
+    }),
   ],
-  providers: [TicketService, TicketResolver, UserService, UserReolver, AuthService],
+  providers: [
+    TicketService,
+    TicketResolver,
+    UserService,
+    UserReolver,
+    AuthService,
+  ],
 })
 export class AppModule {}
