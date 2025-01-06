@@ -19,11 +19,11 @@ export class UserTicket {
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
-  user_id: User;
+  user: User;
 
   @ManyToOne(() => Ticket)
   @JoinColumn({ name: 'ticket_id' })
-  ticket_id: Ticket;
+  ticket: Ticket;
 
   @CreateDateColumn({ name: 'created_at', comment: '생성일' })
   createdAt: Date;

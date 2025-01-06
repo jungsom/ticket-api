@@ -1,9 +1,12 @@
-import { Args, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Query, Resolver } from '@nestjs/graphql';
 import { TicketOutPut } from 'src/ticket/dtos/ticket.dto';
 import { TicketService } from 'src/ticket/ticket.service';
 import { TicketCountOutPut } from './dtos/ticket-count.dto';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'auth/auth.guard';
+import { QueryBuilder } from 'typeorm';
+import { Ticket } from './ticket.entity';
+import { UserTicketInput, UserTicketOutput } from 'src/user/dtos/user-ticket.dto';
 
 @Resolver(() => TicketOutPut)
 export class TicketResolver {
@@ -25,5 +28,29 @@ export class TicketResolver {
   @Query(() => [TicketCountOutPut])
   async ticketCounts() {
     return await this.ticketService.getTicketCount();
+  }
+
+  @UseGuards(AuthGuard)
+  @Query(() => TicketOutPut)
+  async buyTicket(@Args('id', { type: () => Number }) id: number, @Context() context) {
+    const user = context.req.user;
+    const updatedTicketState = await this.ticketService.updateTicketState(id);
+    const reservedTicket = await this.ticketService.reservedTicket(user, updatedTicketState)
+
+    return updatedTicketState;
+  }
+
+  @UseGuards(AuthGuard)
+  @Query(() => [UserTicketOutput])
+  async reservedTicket(@Context() context) {
+    const user = context.req.user;
+    const reservedTicket = await this.ticketService.getReservedTicket(user);
+    return reservedTicket;
+  }
+
+  @UseGuards(AuthGuard)
+  @Query(() => String)
+  async cancelledTicket(@Context() context) {
+    return await this.ticketService.deleteReservedTicket();
   }
 }

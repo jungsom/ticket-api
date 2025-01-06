@@ -20,5 +20,7 @@ export class UserService {
 
   // TODO: 회원가입 (비밀번호 해시화)
 
-
+  async selectUser(id: number) {
+    return await this.userRepository.findOne({ where: { id }})
+  }
 }

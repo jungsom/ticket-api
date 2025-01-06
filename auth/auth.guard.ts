@@ -22,9 +22,6 @@ export class AuthGuard implements CanActivate {
     const accessToken = this.extractAccessTokenFromHeader(request);
     const refreshToken = this.extractRefreshTokenFromCookie(request);
 
-    if (!accessToken && !refreshToken) {
-      throw new UnauthorizedException('잘못된 접근입니다. 다시 시도해 주세요.');
-    }
     try {
       if (accessToken) {
         const payload = await this.jwtService.verifyAsync(accessToken, {
@@ -36,7 +33,7 @@ export class AuthGuard implements CanActivate {
       }
     } catch (error) {
       // 액세스 토큰 만료 시
-      if (error.name === 'TokenExpiredError' && refreshToken) {
+      if (refreshToken) {
         const newPayload = await this.jwtService.verifyAsync(refreshToken, {
           secret: process.env.SECRET_KEY,
         })
@@ -44,7 +41,7 @@ export class AuthGuard implements CanActivate {
         response.setHeader(`Authorization`, `Bearer ${newAccessToken}`);
       // 리프레시 토큰 만료 시
       } else if (!refreshToken) {
-        throw new UnauthorizedException("토큰이 만료되었습니다. 다시 로그인해 주세요.");
+        throw new UnauthorizedException("잘못된 접근입니다. 다시 로그인해 주세요.");
       }
     }
   }

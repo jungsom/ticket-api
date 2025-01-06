@@ -35,7 +35,7 @@ import { Request, Response } from 'express';
       entities: [User, Ticket, UserTicket],
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([Ticket, User]),
+    TypeOrmModule.forFeature([Ticket, User, UserTicket]),
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
