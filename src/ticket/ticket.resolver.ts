@@ -1,4 +1,4 @@
-import { Args, Context, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { TicketOutPut } from 'src/ticket/dtos/ticket.dto';
 import { TicketService } from 'src/ticket/ticket.service';
 import { TicketCountOutPut } from './dtos/ticket-count.dto';
@@ -34,7 +34,7 @@ export class TicketResolver {
   }
 
   @UseGuards(AuthGuard)
-  @Query(() => TicketOutPut)
+  @Mutation(() => TicketOutPut)
   async buyTicket(
     @Args('id', { type: () => Number }) id: number,
     @Context() context,
@@ -58,7 +58,7 @@ export class TicketResolver {
   }
 
   @UseGuards(AuthGuard)
-  @Query(() => String)
+  @Mutation(() => String)
   async cancelledTicket(
     @Args('id', { type: () => Number }) ticketId: number,
     @Context() context,
