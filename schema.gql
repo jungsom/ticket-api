@@ -23,37 +23,42 @@ enum TicketState {
 
 type TicketCountOutPut {
   error: ErrorOutput
-  name: String!
-  count: Int!
+  name: String
+  count: Int
 }
 
 type UserOutPut {
-  id: Int!
-  email: String!
-  name: String!
+  id: Int
+  email: String
+  name: String
 }
 
 type UserTicketOutput {
   error: ErrorOutput
-  id: Int!
-  user: UserOutPut!
-  ticket: TicketOutPut!
+  id: Int
+  user: UserOutPut
+  ticket: TicketOutPut
 }
 
 type Query {
-  login(input: UserInput!): String!
-  ticket(id: Float!): TicketOutPut!
-  availableTicket(name: String!): [TicketOutPut!]!
+  ticket(input: TicketInput!): TicketOutPut!
+  availableTicket(input: TicketInput!): [TicketOutPut!]!
   ticketCounts: [TicketCountOutPut!]!
   reservedTicket: [UserTicketOutput!]!
+  login(input: UserInput!): String!
+}
+
+input TicketInput {
+  id: Int
+  name: String
 }
 
 input UserInput {
-  email: String!
-  password: String!
+  email: String
+  password: String
 }
 
 type Mutation {
-  buyTicket(id: Float!): TicketOutPut!
-  cancelledTicket(id: Float!): TicketOutPut!
+  buyTicket(input: TicketInput!): TicketOutPut!
+  cancelledTicket(input: TicketInput!): TicketOutPut!
 }

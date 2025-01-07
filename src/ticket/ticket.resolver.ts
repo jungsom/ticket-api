@@ -1,15 +1,14 @@
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { TicketInput, TicketOutPut } from 'src/ticket/dtos/ticket.dto';
 import { TicketService } from 'src/ticket/ticket.service';
 import { TicketCountOutPut } from './dtos/ticket-count.dto';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { QueryBuilder } from 'typeorm';
-import { Ticket } from '../database/ticket.entity';
 import {
-  UserTicketInput,
   UserTicketOutput,
 } from 'src/user/dtos/user-ticket.dto';
+import { User } from 'src/auth/auth.decorator';
+import { PayLoad } from 'src/auth/dto/auth.dto';
 
 @Resolver(() => TicketOutPut)
 export class TicketResolver {
@@ -35,12 +34,10 @@ export class TicketResolver {
 
   @UseGuards(AuthGuard)
   @Mutation(() => TicketOutPut)
-  async buyTicket(
-    @Args('input') input: TicketInput,
-    @Context() context,
-  ) {
-    const user = context.req.user;
-    const updatedTicketState = await this.ticketService.updateTicketState(input.id);
+  async buyTicket(@Args('input') input: TicketInput, @User() user: PayLoad) {
+    const updatedTicketState = await this.ticketService.updateTicketState(
+      input.id,
+    );
     const reservedTicket = await this.ticketService.reservedTicket(
       user,
       updatedTicketState,
@@ -51,21 +48,18 @@ export class TicketResolver {
 
   @UseGuards(AuthGuard)
   @Query(() => [UserTicketOutput])
-  async reservedTicket(@Context() context) {
-    const user = context.req.user;
+  async reservedTicket(@User() user: PayLoad) {
     const reservedTicket = await this.ticketService.getReservedTicket(user);
     return reservedTicket;
   }
 
   @UseGuards(AuthGuard)
   @Mutation(() => TicketOutPut)
-  async cancelledTicket(
-    @Args('input') input: TicketInput,
-    @Context() context,
-  ) {
+  async cancelledTicket(@Args('input') input: TicketInput) {
     try {
-      const deletedTicket =
-        await this.ticketService.deleteReservedTicket(input.id);
+      const deletedTicket = await this.ticketService.deleteReservedTicket(
+        input.id,
+      );
 
       return deletedTicket;
     } catch (e) {

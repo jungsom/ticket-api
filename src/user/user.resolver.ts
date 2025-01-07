@@ -1,14 +1,10 @@
-import { Args, Context, Int, Query, Resolver } from '@nestjs/graphql';
-import { UserInput, UserOutPut } from './dtos/user.dto';
-import { UserService } from './user.service';
-import { Request, UnauthorizedException, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '../auth/auth.guard';
+import { Args, Context,  Query, Resolver } from '@nestjs/graphql';
+import { UserInput } from './dtos/user.dto';
 import { AuthService } from 'src/auth/auth.service';
 
 @Resolver()
 export class UserResolver {
   constructor(
-    private userService: UserService,
     private authService: AuthService,
   ) {}
 
