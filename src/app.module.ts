@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/user/user.entity';
-import { Ticket } from 'src/ticket/ticket.entity';
-import { UserTicket } from './user/user-ticket.entity';
+import { User } from 'src/database/user.entity';
+import { Ticket } from 'src/database/ticket.entity';
+import { UserTicket } from './database/user-ticket.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { AuthModule } from './auth/auth.module';
@@ -38,7 +38,7 @@ import { JwtModule } from '@nestjs/jwt';
     }),
     AuthModule,
     TicketModule,
-    UserModule
+    UserModule,
   ],
   providers: [],
 })

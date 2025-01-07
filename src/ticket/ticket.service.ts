@@ -1,16 +1,18 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Ticket } from 'src/ticket/ticket.entity';
+import { Ticket } from 'src/database/ticket.entity';
 import { TicketState } from 'src/enum/ticket-state.enum';
 import { TicketOutPut } from 'src/ticket/dtos/ticket.dto';
 import { Repository } from 'typeorm';
 import { TicketCountOutPut } from './dtos/ticket-count.dto';
-import { User } from 'src/user/user.entity';
-import { UserTicket } from 'src/user/user-ticket.entity';
+import { User } from 'src/database/user.entity';
+import { UserTicket } from 'src/database/user-ticket.entity';
 import { UserService } from 'src/user/user.service';
 import { NOTFOUND } from 'dns';
 import { UserTicketOutput } from 'src/user/dtos/user-ticket.dto';
 import { PayLoad } from 'src/auth/dto/auth.dto';
+import { error } from 'console';
+import { GraphQLError } from 'graphql';
 
 @Injectable()
 export class TicketService {
@@ -121,12 +123,18 @@ export class TicketService {
       where: { id: ticketId },
     });
     if (!userTicket || !ticket) {
-      throw new Error('해당 티켓을 찾을 수 없습니다.');
+      throw new GraphQLError('해당 티켓을 찾을 수 없습니다.', {
+        extensions: {
+          code: 'ticket_not_found',
+        },
+      });
     }
 
     ticket.state = TicketState.AVAILABLE;
 
-    await this.userTicketRepository.delete(userTicket.id);
-    await this.ticketRepository.save(ticket);
+    const deletedTicket = await this.userTicketRepository.delete(userTicket.id);
+    const updatedTicketState = await this.ticketRepository.save(ticket);
+
+    return updatedTicketState;
   }
 }

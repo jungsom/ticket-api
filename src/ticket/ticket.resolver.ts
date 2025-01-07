@@ -1,11 +1,11 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { TicketOutPut } from 'src/ticket/dtos/ticket.dto';
+import { TicketInput, TicketOutPut } from 'src/ticket/dtos/ticket.dto';
 import { TicketService } from 'src/ticket/ticket.service';
 import { TicketCountOutPut } from './dtos/ticket-count.dto';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { QueryBuilder } from 'typeorm';
-import { Ticket } from './ticket.entity';
+import { Ticket } from '../database/ticket.entity';
 import {
   UserTicketInput,
   UserTicketOutput,
@@ -17,14 +17,14 @@ export class TicketResolver {
 
   @UseGuards(AuthGuard)
   @Query(() => TicketOutPut)
-  async ticket(@Args('id', { type: () => Number }) id: number) {
-    return await this.ticketService.getTicket(id);
+  async ticket(@Args('input') input: TicketInput) {
+    return await this.ticketService.getTicket(input.id);
   }
 
   @UseGuards(AuthGuard)
   @Query(() => [TicketOutPut])
-  async availableTicket(@Args('name', { type: () => String }) name: string) {
-    return await this.ticketService.getTickets(name);
+  async availableTicket(@Args('input') input: TicketInput) {
+    return await this.ticketService.getTickets(input.name);
   }
 
   @UseGuards(AuthGuard)
@@ -36,11 +36,11 @@ export class TicketResolver {
   @UseGuards(AuthGuard)
   @Mutation(() => TicketOutPut)
   async buyTicket(
-    @Args('id', { type: () => Number }) id: number,
+    @Args('input') input: TicketInput,
     @Context() context,
   ) {
     const user = context.req.user;
-    const updatedTicketState = await this.ticketService.updateTicketState(id);
+    const updatedTicketState = await this.ticketService.updateTicketState(input.id);
     const reservedTicket = await this.ticketService.reservedTicket(
       user,
       updatedTicketState,
@@ -58,13 +58,23 @@ export class TicketResolver {
   }
 
   @UseGuards(AuthGuard)
-  @Mutation(() => String)
+  @Mutation(() => TicketOutPut)
   async cancelledTicket(
-    @Args('id', { type: () => Number }) ticketId: number,
+    @Args('input') input: TicketInput,
     @Context() context,
   ) {
-    await this.ticketService.deleteReservedTicket(ticketId);
+    try {
+      const deletedTicket =
+        await this.ticketService.deleteReservedTicket(input.id);
 
-    return '해당 티켓에 대한 예약이 취소되었습니다.';
+      return deletedTicket;
+    } catch (e) {
+      return {
+        error: {
+          code: e.extensions?.code,
+          message: e.message,
+        },
+      };
+    }
   }
 }

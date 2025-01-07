@@ -1,17 +1,27 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { TicketState } from "src/enum/ticket-state.enum";
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { BaseOutput } from 'src/common/dto/base.dto';
+import { TicketState } from 'src/enum/ticket-state.enum';
+
+@InputType()
+export class TicketInput {
+    @Field((type) => Int, { nullable: true })
+    id?: number;
+
+    @Field((type) => String, { nullable: true })
+    name?: string;  
+}
 
 @ObjectType()
-export class TicketOutPut {
-    @Field(type => Int)
-    id: number;
+export class TicketOutPut extends BaseOutput {
+  @Field((type) => Int, { nullable: true })
+  id?: number;
 
-    @Field(type => String)
-    code: string;
+  @Field((type) => String, { nullable: true })
+  code?: string;
 
-    @Field(type => String)
-    name: string;
+  @Field((type) => String, { nullable: true })
+  name?: string;
 
-    @Field(type => TicketState)
-    state: TicketState;
+  @Field((type) => TicketState, { nullable: true })
+  state?: TicketState;
 }
