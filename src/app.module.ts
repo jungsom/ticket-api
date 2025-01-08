@@ -10,7 +10,6 @@ import { Request, Response } from 'express';
 import { AuthModule } from './auth/auth.module';
 import { TicketModule } from './ticket/ticket.module';
 import { UserModule } from './user/user.module';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [

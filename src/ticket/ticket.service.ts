@@ -1,18 +1,18 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ticket } from 'src/database/ticket.entity';
 import { TicketState } from 'src/enum/ticket-state.enum';
 import { TicketOutPut } from 'src/ticket/dtos/ticket.dto';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { TicketCountOutPut } from './dtos/ticket-count.dto';
-import { User } from 'src/database/user.entity';
 import { UserTicket } from 'src/database/user-ticket.entity';
 import { UserService } from 'src/user/user.service';
-import { NOTFOUND } from 'dns';
 import { UserTicketOutput } from 'src/user/dtos/user-ticket.dto';
 import { PayLoad } from 'src/auth/dto/auth.dto';
-import { error } from 'console';
-import { GraphQLError } from 'graphql';
 
 @Injectable()
 export class TicketService {
@@ -22,6 +22,7 @@ export class TicketService {
     @InjectRepository(UserTicket)
     private readonly userTicketRepository: Repository<UserTicket>,
     private readonly userService: UserService,
+    private dataSource: DataSource,
   ) {}
 
   /** 특정 티켓 상세 조회 */
@@ -74,16 +75,36 @@ export class TicketService {
 
   /** 티켓 예약 상태 변경 */
   async updateTicketState(id: number) {
-    const availableTicket = await this.ticketRepository.findOne({
-      where: { id: id, state: TicketState.AVAILABLE },
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
 
-    if (!availableTicket) {
-      throw new HttpException('이미 예약이 완료된 티켓입니다.', HttpStatus.BAD_REQUEST)
+    try {
+      const availableTicket = await queryRunner.manager.findOne(
+        this.ticketRepository.target,
+        {
+          where: { id: id, state: TicketState.AVAILABLE },
+        },
+      );
+
+      await queryRunner.startTransaction();
+
+      if (!availableTicket) {
+        throw new HttpException(
+          '이미 예약이 완료된 티켓입니다.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      availableTicket.state = TicketState.RESERVED;
+      await queryRunner.manager.save(availableTicket);
+
+      await queryRunner.commitTransaction();
+      return availableTicket;
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release(); 
     }
-
-    availableTicket.state = TicketState.RESERVED;
-    return await this.ticketRepository.save(availableTicket);
   }
 
   /** 사용자 예약 구매 */
@@ -123,7 +144,10 @@ export class TicketService {
       where: { id: ticketId },
     });
     if (!userTicket || !ticket) {
-      throw new HttpException('해당 티켓을 찾을 수 없습니다.', HttpStatus.BAD_REQUEST)
+      throw new HttpException(
+        '해당 티켓을 찾을 수 없습니다.',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     ticket.state = TicketState.AVAILABLE;
