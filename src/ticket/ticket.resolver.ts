@@ -4,9 +4,7 @@ import { TicketService } from 'src/ticket/ticket.service';
 import { TicketCountOutPut } from './dtos/ticket-count.dto';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
-import {
-  UserTicketOutput,
-} from 'src/user/dtos/user-ticket.dto';
+import { UserTicketOutput } from 'src/user/dtos/user-ticket.dto';
 import { User } from 'src/auth/auth.decorator';
 import { PayLoad } from 'src/auth/dto/auth.dto';
 
@@ -17,40 +15,85 @@ export class TicketResolver {
   @UseGuards(AuthGuard)
   @Query(() => TicketOutPut)
   async ticket(@Args('input') input: TicketInput) {
-    return await this.ticketService.getTicket(input.id);
+    try {
+      return await this.ticketService.getTicket(input.id);
+    } catch (e) {
+      return {
+        error: {
+          code: e.status,
+          message: e.message,
+        },
+      };
+    }
   }
 
   @UseGuards(AuthGuard)
   @Query(() => [TicketOutPut])
   async availableTicket(@Args('input') input: TicketInput) {
-    return await this.ticketService.getTickets(input.name);
+    try {
+      return await this.ticketService.getTickets(input.name);
+    } catch (e) {
+      return {
+        error: {
+          code: e.status,
+          message: e.message,
+        },
+      };
+    }
   }
 
   @UseGuards(AuthGuard)
   @Query(() => [TicketCountOutPut])
   async ticketCounts() {
-    return await this.ticketService.getTicketCount();
+    try {
+      return await this.ticketService.getTicketCount();
+    } catch (e) {
+      return {
+        error: {
+          code: e.status,
+          message: e.message,
+        },
+      };
+    }
   }
 
   @UseGuards(AuthGuard)
   @Mutation(() => TicketOutPut)
   async buyTicket(@Args('input') input: TicketInput, @User() user: PayLoad) {
-    const updatedTicketState = await this.ticketService.updateTicketState(
-      input.id,
-    );
-    const reservedTicket = await this.ticketService.reservedTicket(
-      user,
-      updatedTicketState,
-    );
+    try {
+      const updatedTicketState = await this.ticketService.updateTicketState(
+        input.id,
+      );
+      const reservedTicket = await this.ticketService.reservedTicket(
+        user,
+        updatedTicketState,
+      );
 
-    return updatedTicketState;
+      return updatedTicketState;
+    } catch (e) {
+      return {
+        error: {
+          code: e.status,
+          message: e.message,
+        },
+      };
+    }
   }
 
   @UseGuards(AuthGuard)
   @Query(() => [UserTicketOutput])
   async reservedTicket(@User() user: PayLoad) {
-    const reservedTicket = await this.ticketService.getReservedTicket(user);
-    return reservedTicket;
+    try {
+      const reservedTicket = await this.ticketService.getReservedTicket(user);
+      return reservedTicket;
+    } catch (e) {
+      return {
+        error: {
+          code: e.status,
+          message: e.message,
+        },
+      };
+    }
   }
 
   @UseGuards(AuthGuard)
@@ -65,7 +108,7 @@ export class TicketResolver {
     } catch (e) {
       return {
         error: {
-          code: e.extensions?.code,
+          code: e.status,
           message: e.message,
         },
       };

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../database/user.entity';
@@ -18,7 +18,7 @@ export class AuthService {
     const user = await this.userRepository.findOne({ where: { email } });
 
     if (!user || user.password !== pass) {
-      throw new UnauthorizedException('사용자 인증에 실패하였습니다.');
+      throw new HttpException('로그인 인증에 실패하였습니다.', HttpStatus.UNAUTHORIZED)
     }
 
     return user;

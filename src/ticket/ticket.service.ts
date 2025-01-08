@@ -79,7 +79,7 @@ export class TicketService {
     });
 
     if (!availableTicket) {
-      throw new NotFoundException('이미 예약이 완료된 티켓입니다.');
+      throw new HttpException('이미 예약이 완료된 티켓입니다.', HttpStatus.BAD_REQUEST)
     }
 
     availableTicket.state = TicketState.RESERVED;
@@ -123,11 +123,7 @@ export class TicketService {
       where: { id: ticketId },
     });
     if (!userTicket || !ticket) {
-      throw new GraphQLError('해당 티켓을 찾을 수 없습니다.', {
-        extensions: {
-          code: 'ticket_not_found',
-        },
-      });
+      throw new HttpException('해당 티켓을 찾을 수 없습니다.', HttpStatus.BAD_REQUEST)
     }
 
     ticket.state = TicketState.AVAILABLE;

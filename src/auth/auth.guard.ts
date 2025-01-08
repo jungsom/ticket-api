@@ -1,6 +1,8 @@
 import {
   CanActivate,
   ExecutionContext,
+  HttpException,
+  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -31,6 +33,7 @@ export class AuthGuard implements CanActivate {
 
         return true;
       }
+      throw new HttpException('사용자 인증에 실패하였습니다.', HttpStatus.UNAUTHORIZED)
     } catch (error) {
       // 액세스 토큰 만료 시
       if (refreshToken) {
@@ -41,8 +44,9 @@ export class AuthGuard implements CanActivate {
         response.setHeader(`Authorization`, `Bearer ${newAccessToken}`);
       // 리프레시 토큰 만료 시
       } else if (!refreshToken) {
-        throw new UnauthorizedException("잘못된 접근입니다. 다시 로그인해 주세요.");
+        throw new HttpException('인증이 만료되었습니다. 다시 로그인해 주세요.', HttpStatus.UNAUTHORIZED)
       }
+      throw new HttpException('사용자 인증에 실패하였습니다.', HttpStatus.UNAUTHORIZED)
     }
   }
 

@@ -1,4 +1,5 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { BaseOutput } from 'src/common/dto/base.dto';
 
 @InputType()
 export class UserInput {
@@ -10,7 +11,7 @@ export class UserInput {
 }
 
 @ObjectType()
-export class UserOutPut {
+export class UserOutPut extends BaseOutput {
   @Field((type) => Int, { nullable: true })
   id?: number;
 
