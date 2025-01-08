@@ -62,6 +62,7 @@ export class TicketService {
       .createQueryBuilder('ticket')
       .select('ticket.name')
       .addSelect('COUNT(*) AS count')
+      .where('ticket.state = :state', { state: TicketState.AVAILABLE })
       .groupBy('ticket.name')
       .getRawMany();
 

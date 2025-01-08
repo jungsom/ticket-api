@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { TicketResolver } from './ticket.resolver';
 import { TicketService } from './ticket.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -15,7 +15,7 @@ import { JwtModule } from '@nestjs/jwt';
     UserModule,
     AuthModule,
   ],
-  providers: [TicketResolver, TicketService],
+  providers: [TicketResolver, TicketService, Logger],
   exports: [],
 })
 export class TicketModule {}

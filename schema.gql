@@ -43,10 +43,10 @@ type UserTicketOutput {
 
 type Query {
   login(input: UserInput!): String!
-  ticket(input: TicketInput!): TicketOutPut!
-  availableTicket(input: TicketInput!): [TicketOutPut!]!
-  ticketCounts: [TicketCountOutPut!]!
-  reservedTicket: [UserTicketOutput!]!
+  getTicketById(input: TicketInput!): TicketOutPut!
+  getAvailableTickets(input: TicketInput!): [TicketOutPut!]!
+  getTicketCounts: [TicketCountOutPut!]!
+  getReservedTicketByUser: [UserTicketOutput!]!
 }
 
 input UserInput {
@@ -60,6 +60,6 @@ input TicketInput {
 }
 
 type Mutation {
-  buyTicket(input: TicketInput!): TicketOutPut!
-  cancelledTicket(input: TicketInput!): TicketOutPut!
+  buyTicketByUser(input: TicketInput!): TicketOutPut!
+  cancelReservedTicketByUser(input: TicketInput!): TicketOutPut!
 }
