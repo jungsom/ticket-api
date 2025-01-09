@@ -15,7 +15,9 @@ type TicketOutPut {
   state: TicketState
 }
 
-"""예약 상태"""
+"""
+예약 상태
+"""
 enum TicketState {
   AVAILABLE
   RESERVED

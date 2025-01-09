@@ -1,8 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ticket } from 'src/database/ticket.entity';
 import { TicketState } from 'src/enum/ticket-state.enum';
@@ -105,7 +101,7 @@ export class TicketService {
     } catch (e) {
       await queryRunner.rollbackTransaction();
     } finally {
-      await queryRunner.release(); 
+      await queryRunner.release();
     }
   }
 

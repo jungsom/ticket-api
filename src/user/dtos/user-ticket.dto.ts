@@ -1,6 +1,4 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { User } from '../../database/user.entity';
-import { Ticket } from 'src/database/ticket.entity';
 import { TicketOutPut } from 'src/ticket/dtos/ticket.dto';
 import { UserOutPut } from './user.dto';
 import { BaseOutput } from 'src/common/dto/base.dto';

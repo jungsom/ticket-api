@@ -1,20 +1,9 @@
-// 성공 => jwt 발급
-
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../database/user.entity';
 import { Repository } from 'typeorm';
 import { UserInput } from './dtos/user.dto';
-import { AuthService } from '../auth/auth.service';
-import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { hash } from 'crypto';
 
 @Injectable()
 export class UserService {
