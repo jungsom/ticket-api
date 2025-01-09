@@ -8,6 +8,9 @@ export class UserInput {
 
   @Field((type) => String, { nullable: true })
   password?: string;
+
+  @Field((type) => String, { nullable: true })
+  name?: string;
 }
 
 @ObjectType()

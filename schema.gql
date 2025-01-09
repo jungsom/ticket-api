@@ -42,20 +42,22 @@ type UserTicketOutput {
 }
 
 type Query {
-  login(input: UserInput!): String!
   getTicketById(input: TicketInput!): TicketOutPut!
   getAvailableTickets(input: TicketInput!): [TicketOutPut!]!
   getTicketCounts: [TicketCountOutPut!]!
   getReservedTicketByUser: [UserTicketOutput!]!
+  signup(input: UserInput!): UserOutPut!
+  login(input: UserInput!): UserOutPut!
+}
+
+input TicketInput {
+  id: Int
+  name: String
 }
 
 input UserInput {
   email: String
   password: String
-}
-
-input TicketInput {
-  id: Int
   name: String
 }
 

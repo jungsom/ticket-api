@@ -9,20 +9,8 @@ import { PayLoad } from './dto/auth.dto';
 export class AuthService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
   ) {}
-
-  /** 사용자 로그인 정보 확인 */
-  async validateUser(email: string, pass: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { email } });
-
-    if (!user || user.password !== pass) {
-      throw new HttpException('로그인 인증에 실패하였습니다.', HttpStatus.UNAUTHORIZED)
-    }
-
-    return user;
-  }
 
   /** 액세스 토큰 생성 */
   async createAccessToken(user: User): Promise<string> {

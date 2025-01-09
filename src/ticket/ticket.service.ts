@@ -84,6 +84,7 @@ export class TicketService {
         this.ticketRepository.target,
         {
           where: { id: id, state: TicketState.AVAILABLE },
+          lock: { mode: 'pessimistic_write' }, // 비관적 락
         },
       );
 
