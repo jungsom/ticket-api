@@ -8,7 +8,6 @@ import { PayLoad } from './dto/auth.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
     private readonly jwtService: JwtService,
   ) {}
 
