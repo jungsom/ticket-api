@@ -5,11 +5,9 @@ import { TicketState } from 'src/enum/ticket-state.enum';
 
 @InputType()
 export class TicketInput {
-  @IsInt()
   @Field((type) => Int, { nullable: true })
   id?: number;
 
-  @IsString()
   @Field((type) => String, { nullable: true })
   name?: string;
 }

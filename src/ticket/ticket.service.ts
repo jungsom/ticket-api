@@ -26,13 +26,7 @@ export class TicketService {
     const ticket = await this.ticketRepository.findOne({
       where: { id: ticketId },
     });
-    const result: TicketOutPut = {
-      id: ticket.id,
-      code: ticket.code,
-      name: ticket.name,
-      state: ticket.state,
-    };
-    return result;
+    return ticket;
   }
 
   /** 예약 가능한 모든 티켓 조회 */
@@ -71,7 +65,7 @@ export class TicketService {
   }
 
   /** 티켓 예약 상태 변경 */
-  async updateTicketState(id: number) {
+  async updateTicketState(id: number): Promise<Ticket> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
 
@@ -79,8 +73,7 @@ export class TicketService {
       const availableTicket = await queryRunner.manager.findOne(
         this.ticketRepository.target,
         {
-          where: { id: id, state: TicketState.AVAILABLE },
-          lock: { mode: 'pessimistic_write' }, // 비관적 락
+          where: { id: id, state: TicketState.AVAILABLE }
         },
       );
 

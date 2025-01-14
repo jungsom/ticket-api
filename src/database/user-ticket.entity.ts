@@ -1,9 +1,10 @@
 import { Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'src/database/user.entity';
 import { Ticket } from 'src/database/ticket.entity';
-import { Field } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { BaseEntity } from './base.entity';
 
+@ObjectType()
 @Entity()
 export class UserTicket extends BaseEntity {
   @ManyToOne(() => User)

@@ -2,6 +2,55 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type User {
+  id: Int
+
+  """생성일"""
+  createdAt: DateTime
+
+  """수정일"""
+  updatedAt: DateTime
+
+  """삭제일"""
+  deletedAt: DateTime
+  email: String!
+  name: String!
+  password: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Ticket {
+  id: Int
+
+  """생성일"""
+  createdAt: DateTime
+
+  """수정일"""
+  updatedAt: DateTime
+
+  """삭제일"""
+  deletedAt: DateTime
+
+  """티켓 코드"""
+  code: String!
+
+  """티켓 이름"""
+  name: String!
+
+  """티켓 예약 상태"""
+  state: TicketState!
+}
+
+"""예약 상태"""
+enum TicketState {
+  AVAILABLE
+  RESERVED
+}
+
 type ErrorOutput {
   code: String
   message: String
@@ -15,18 +64,17 @@ type TicketOutPut {
   state: TicketState
 }
 
-"""
-예약 상태
-"""
-enum TicketState {
-  AVAILABLE
-  RESERVED
-}
-
 type TicketCountOutPut {
   error: ErrorOutput
   name: String
   count: Int
+}
+
+type UserTicketOutput {
+  error: ErrorOutput
+  id: Int
+  user: User
+  ticket: Ticket
 }
 
 type UserOutPut {
@@ -36,25 +84,13 @@ type UserOutPut {
   name: String
 }
 
-type UserTicketOutput {
-  error: ErrorOutput
-  id: Int
-  user: UserOutPut
-  ticket: TicketOutPut
-}
-
 type Query {
+  signup(input: UserInput!): UserOutPut!
+  login(input: UserInput!): UserOutPut!
   getTicketById(input: TicketInput!): TicketOutPut!
   getAvailableTickets(input: TicketInput!): [TicketOutPut!]!
   getTicketCounts: [TicketCountOutPut!]!
   getReservedTicketByUser: [UserTicketOutput!]!
-  signup(input: UserInput!): UserOutPut!
-  login(input: UserInput!): UserOutPut!
-}
-
-input TicketInput {
-  id: Int
-  name: String
 }
 
 input UserInput {
@@ -63,7 +99,12 @@ input UserInput {
   name: String
 }
 
+input TicketInput {
+  id: Int
+  name: String
+}
+
 type Mutation {
-  buyTicketByUser(input: TicketInput!): TicketOutPut!
+  updateTicket(input: TicketInput!): String!
   cancelReservedTicketByUser(input: TicketInput!): TicketOutPut!
 }

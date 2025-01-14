@@ -10,6 +10,8 @@ import { Request, Response } from 'express';
 import { AuthModule } from './auth/auth.module';
 import { TicketModule } from './ticket/ticket.module';
 import { UserModule } from './user/user.module';
+import { BullModule } from '@nestjs/bull';
+import { EventModule } from './event/event.module';
 
 @Module({
   imports: [
@@ -36,12 +38,24 @@ import { UserModule } from './user/user.module';
         synchronize: true,
       }),
     }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        redis: {
+          host: config.get<string>('REDIS_HOST'),
+          port: config.get<number>('REDIS_PORT'),
+        },
+        settings: { maxStalledCount: 100 }, // 재시도 횟수
+      }),
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     AuthModule,
     TicketModule,
     UserModule,
+    EventModule,
   ],
   providers: [],
 })

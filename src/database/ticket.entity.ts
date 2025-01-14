@@ -1,8 +1,9 @@
-import { Field } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { TicketState } from 'src/enum/ticket-state.enum';
 import { Column, Entity } from 'typeorm';
 import { BaseEntity } from './base.entity';
 
+@ObjectType()
 @Entity()
 export class Ticket extends BaseEntity {
   @Column({ unique: true, nullable: false })

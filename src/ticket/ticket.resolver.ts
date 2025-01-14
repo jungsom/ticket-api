@@ -106,6 +106,7 @@ export class TicketResolver {
     }
   }
 
+  /** 
   @UseGuards(AuthGuard)
   @Mutation(() => TicketOutPut)
   async buyTicketByUser(
@@ -146,6 +147,7 @@ export class TicketResolver {
       });
     }
   }
+  */
 
   @UseGuards(AuthGuard)
   @Query(() => [UserTicketOutput])
