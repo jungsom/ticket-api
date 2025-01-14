@@ -66,36 +66,19 @@ export class TicketService {
 
   /** 티켓 예약 상태 변경 */
   async updateTicketState(id: number): Promise<Ticket> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
+    const availableTicket = await this.ticketRepository.findOne({
+      where: { id: id, state: TicketState.AVAILABLE },
+    });
 
-    try {
-      const availableTicket = await queryRunner.manager.findOne(
-        this.ticketRepository.target,
-        {
-          where: { id: id, state: TicketState.AVAILABLE }
-        },
+    if (!availableTicket) {
+      throw new HttpException(
+        '이미 예약이 완료된 티켓입니다.',
+        HttpStatus.BAD_REQUEST,
       );
-
-      await queryRunner.startTransaction();
-
-      if (!availableTicket) {
-        throw new HttpException(
-          '이미 예약이 완료된 티켓입니다.',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
-      availableTicket.state = TicketState.RESERVED;
-      await queryRunner.manager.save(availableTicket);
-
-      await queryRunner.commitTransaction();
-      return availableTicket;
-    } catch (e) {
-      await queryRunner.rollbackTransaction();
-    } finally {
-      await queryRunner.release();
     }
+    availableTicket.state = TicketState.RESERVED;
+    await this.ticketRepository.save(availableTicket);
+    return availableTicket;
   }
 
   /** 사용자 예약 구매 */

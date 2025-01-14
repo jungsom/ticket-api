@@ -105,6 +105,6 @@ input TicketInput {
 }
 
 type Mutation {
-  updateTicket(input: TicketInput!): String!
+  handleTicket(input: TicketInput!): TicketOutPut!
   cancelReservedTicketByUser(input: TicketInput!): TicketOutPut!
 }

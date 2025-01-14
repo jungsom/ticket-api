@@ -12,6 +12,7 @@ import { TicketModule } from './ticket/ticket.module';
 import { UserModule } from './user/user.module';
 import { BullModule } from '@nestjs/bull';
 import { EventModule } from './event/event.module';
+import { ConsumerModule } from './consumer/consumer.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { EventModule } from './event/event.module';
     TicketModule,
     UserModule,
     EventModule,
+    ConsumerModule
   ],
   providers: [],
 })
